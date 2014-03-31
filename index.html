@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Cats</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	<style type="text/css">
+	#pic{
+		background-repeat:no-repeat;
+		background-attachment:fixed;
+		background-position:center; 
+		background-size: contain;
+	}
+	</style>
+</head>
+<body style="padding:0; margin: 0;">
+
+<div id="pic">
+</div>
+
+<script>
+var pics= [];
+var cur =0;
+var after = "";
+
+$('#pic').css('width', window.innerWidth+"px");
+$('#pic').css('height', window.innerHeight+"px");
+
+load();
+setInterval(next, 3000);
+function load(){
+	end = 'http://www.reddit.com/r/cats/new.json?limit=100';
+	if (after != "")
+		end += "&after="+after;
+	$.getJSON(end, function(data){
+		after = data['data']['after'];
+	$.each(data['data']['children'], function(key, val){
+		if (val['data']['domain'] == 'i.imgur.com')
+			pics.push(val['data']['url']);
+	});
+	
+	//$('#pic').css("background-image", "url('"+pics[0]+"')");
+	next();
+});
+
+}
+
+
+function next()
+{
+	
+	if(cur > pics.length - 5)
+		load();
+	if (pics.length <= cur)
+		cur = 0;
+	$('#pic').css("background-image", "url('"+pics[cur]+"')");
+
+	cur++;
+}
+</script>
+</body>
+</html>
